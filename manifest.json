@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "stoplight extension",
+  "name": "CraigsDiff",
   "version": "0.0.0",
 
-  "description": "just getting this thing working",
+  "description": "Track changes to listings on Craigslist",
   "icons": {"128": "icon.jpg"},
 
   //"background": { "scripts":["content.js"]},
