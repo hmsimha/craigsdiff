@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "stoplight extension",
+  "version": "0.0.0",
+
+  "description": "just getting this thing working",
+  "icons": {"128": "icon.jpg"},
+
+  //"background": { "scripts":["content.js"]},
+  "content_scripts": [
+    {
+      "matches": 
+      ["*://cleditsim.appspot.com/", "*://*.craigslist.com/*/*/*.html", "*://*.craigslist.org/*/*/*.html", "*://*.craigslist.ca/*/*.html", "*://*.craigslist.com/*/*.html", "*://*.craigslist.org/*/*.html", "*://*.craigslist.ca/*/*.html"],
+      "js": ["gdiff.js", "content.js"]
+    }
+  ],
+  //"background": {"scripts": ["background.js"]},
+  "permissions": ["*://*.craigslist.com/*", "*://*.craigslist.org/*", "*://*.craigslist.ca/*", "cookies", "storage"]
+  //, "permissions": ["http://followyourhart.us/*"],
+  //"web_accessible_resources": ["toggle.html"]
+
+}
