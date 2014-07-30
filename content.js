@@ -20,9 +20,8 @@
 function html_report(diffs) {
   var html = [];
   for (var x = 0; x < diffs.length; x++) {
-    var op = diffs[x][0];    // Operation (insert, delete, equal)
-    var data = diffs[x][1];  // Text of change.
-    var text = data;
+    var op = diffs[x][0],   // Operation (insert, delete, equal)
+        text = diffs[x][1];  // Text of change.
     switch (op) {
       case DIFF_INSERT:
         html[x] = '<ins style="background:#aaffaa;text-decoration:none;">' + text.replace(/<br>/g, '&para;<br>') + '</ins>';
@@ -41,21 +40,23 @@ function html_report(diffs) {
 
 function smartPatch(diff) {
   //returns a compressed string representation of a patch
-  var x, len, patch = "", int2glyph;
-  for (x = 0, len = diff.length; x < len; x++) {
-    int2glyph = String.fromCharCode(diff[x][1].length);
-    if (diff[x+1] && (diff[x][0] === -diff[x+1][0]) && (diff[x][1].length === diff[x+1][1].length)) {
-      patch += 'x' + int2glyph + diff[x+1][1];
-      x++;
+  var int2glyph,
+      len = diff.length,
+      patch = "";
+  for (var idx = 0; idx < len; idx++) {
+    int2glyph = String.fromCharCode(diff[idx][1].length);
+    if (diff[idx+1] && (diff[idx][0] === -diff[idx+1][0]) && (diff[idx][1].length === diff[idx+1][1].length)) {
+      patch += 'x' + int2glyph + diff[idx+1][1];
+      idx++;
     }
-    else if (diff[x][0] === -1) {
+    else if (diff[idx][0] === -1) {
       patch += '-' + int2glyph;
     }
-    else if (diff[x][0] === 0) {
+    else if (diff[idx][0] === 0) {
       patch += '_' + int2glyph;
     }
     else {
-      patch += '+' + int2glyph + diff[x][1];
+      patch += '+' + int2glyph + diff[idx][1];
     };
   };
   return patch;
@@ -63,8 +64,14 @@ function smartPatch(diff) {
 
 function smartPatch_apply(text1, smart_patch) {
   //reconstructs diff from smartpatch
-  var newchars, op, text_cursor, patch_cursor, len = smart_patch.length, text2 = "", glyph2int;
-  if (!smart_patch) return text1; //returns original text if given "", undefined, or other falsy values
+  var glyph2int,
+      len = smart_patch.length,
+      newchars,
+      op,
+      patch_cursor,
+      text_cursor,
+      text2 = "";
+  if (!smart_patch) return text1; //returns original text if given "", undefined, or other falsy value
   for (text_cursor = patch_cursor = 0; patch_cursor < len; patch_cursor += 2) {
     op = smart_patch[patch_cursor];
     glyph2int = smart_patch[patch_cursor+1].charCodeAt(0);
@@ -113,19 +120,30 @@ function toggleDiff()
   }
 }
 
-var indicator = document.createElement("div");
-indicator.textContent = String.fromCharCode(8226);
+function beginTracking() //postData needs to be created in localStorage for this posting ID
+{
+  var postData= [{}]
+  postData[0].txt = currentText;
+  postData[0].date = Date.now();
+  indicator.style.color = "green";
+  craigsdiff[id] = postData;
+  localStorage.setItem(lscd, JSON.stringify(craigsdiff));
+}
+
+var craigsdiff,
+    indicator = document.createElement("div"),
+    lscd = "_craigsdiff_chrome_extension",
+    postingbody = document.getElementById("postingbody"),
+    postinginfo = document.querySelectorAll(".postinginfo")[1];
+indicator.textContent = String.fromCharCode(8226); //equivalent of the &bull; html entity (a bullet point)
 indicator.style.cssText = "position: fixed; font-size: 100px; color: grey; bottom: 0px; right: 0px; line-height: 40px;";
-var craigsdiff, lscd = "_craigsdiff_chrome_extension"
 localStorage.getItem(lscd) ?
   craigsdiff = JSON.parse(localStorage.getItem(lscd)) :
-  craigsdiff =  {}
-document.body.appendChild(indicator); 
-var postinginfo = document.querySelectorAll(".postinginfo")[1];
-var postingbody = document.getElementById("postingbody");
+  craigsdiff =  {};
+document.body.appendChild(indicator);
 for (var x = 0, links = postingbody.querySelectorAll("a.showcontact"); x < links.length; x++) {links[x].click();}
-var currentText = postingbody.innerHTML.replace(/\s{2,}/g, ' ');
-var id = postinginfo.textContent.replace(/\D/g, '');
+var currentText = postingbody.innerHTML.replace(/\s{2,}/g, ' '),
+    id = postinginfo.textContent.replace(/\D/g, '');
 if (id && (id.length > 3) && (postinginfo.outerHTML.indexOf(id) > -1)) {
   var postData= craigsdiff[id];
 
@@ -161,12 +179,3 @@ if (id && (id.length > 3) && (postinginfo.outerHTML.indexOf(id) > -1)) {
   
 }
 
-function beginTracking() //postData needs to be created in localStorage for this posting ID
-{
-  var postData= [{}]
-  postData[0].txt = currentText;
-  postData[0].date = Date.now();
-  indicator.style.color = "green";
-  craigsdiff[id] = postData;
-  localStorage.setItem(lscd, JSON.stringify(craigsdiff));
-}
