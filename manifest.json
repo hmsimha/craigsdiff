@@ -6,17 +6,13 @@
   "description": "Track changes to listings on Craigslist",
   "icons": {"128": "icon.jpg"},
 
-  //"background": { "scripts":["content.js"]},
   "content_scripts": [
     {
       "matches": 
-      ["*://cleditsim.appspot.com/", "*://*.craigslist.com/*/*/*.html", "*://*.craigslist.org/*/*/*.html", "*://*.craigslist.ca/*/*.html", "*://*.craigslist.com/*/*.html", "*://*.craigslist.org/*/*.html", "*://*.craigslist.ca/*/*.html"],
+      ["*://*.craigslist.com/*/*/*.html", "*://*.craigslist.org/*/*/*.html", "*://*.craigslist.ca/*/*.html", "*://*.craigslist.com/*/*.html", "*://*.craigslist.org/*/*.html"],
       "js": ["gdiff.js", "content.js"]
     }
   ],
-  //"background": {"scripts": ["background.js"]},
   "permissions": ["*://*.craigslist.com/*", "*://*.craigslist.org/*", "*://*.craigslist.ca/*", "cookies", "storage"]
-  //, "permissions": ["http://followyourhart.us/*"],
-  //"web_accessible_resources": ["toggle.html"]
 
 }
