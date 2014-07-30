@@ -94,7 +94,7 @@ function smartPatch_apply(text1, smart_patch) {
 function reconstructFullTexts(postData) {
   var fullTexts = []
   for (var x = 0, len = postData.length; x < len; x++) {
-    if (postData[x].txt) fullTexts.push(postData[x].txt);
+    if postData[x].hasOwnProperty('txt')) fullTexts.push(postData[x].txt);
     else fullTexts.push(smartPatch_apply(fullTexts[x-1], postData[x].patch));
   }
   return fullTexts;
